@@ -7,7 +7,9 @@ contract Marathon{
     uint256 _number;
     string _message;
     address _owner;
-    mapping (address => bool) public users;
+    uint256 public withdrawamount;
+    mapping (address=>bool) public users;
+    
 
     constructor(string memory _race){
         _number = 1;
@@ -19,24 +21,63 @@ contract Marathon{
         return _message;
     }
 
+
   
     function number() public view returns (uint256) {
         return  _number;
     }
 
+    function addition(uint256 a, uint256 b) public pure returns(uint256){
+        return a+b;
+    } 
+      function substraction(uint256 a, uint256 b) public pure returns(uint256){
+        return a-b;
+    } 
+      function multiplication(uint256 a, uint256 b) public pure returns(uint256){
+        return a*b;
+    } 
+
+
+
     function setMessage(string memory newMessage) external payable{
         require (_owner == msg.sender, "Set MESSAGE ONLY OWNER FUNCTION");
-        require (msg.value == 10 ," send some wei");
+        require (msg.value > 1 ," send some wei");
         _message=newMessage;
     }
 
-    function addUsers(address _user) external  {
+    function transferOwnership(address newOwner) external{
+        require(_owner== msg.sender , "only Owner function");
+        _owner = newOwner;
+    }
+
+    function withdrawFunds(uint256 amount, address recipient) external payable{
+        //require (_owner == msg.sender, "only OWNER FUNCTION");
+        uint256 totalbalance = address (this).balance;
+        require(amount<totalbalance,"insufficient balance");
+        payable(recipient).transfer(amount);
+        withdrawamount=withdrawamount+amount; 
+           
+       
+    }
+
+
+    function remainingbalance() external view returns(uint){
+        return address(this).balance;
+    }
+
+
+    function addUsers(address _user) external{
         users[_user]=true;
     }
 
-    function setMessageByUser(string memory _newMsg)external{
-        require(users[msg.sender],"only users function");
+    function setMessagebyUser(string memory _newMsg) external {
+        require(users[msg.sender],"only users functions");
         _message=_newMsg;
         users[msg.sender]=false;
     }
 
+
+
+   
+
+}
