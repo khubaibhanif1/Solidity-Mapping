@@ -1,0 +1,42 @@
+// SPDX-License-Identifier: No-Licence
+
+ pragma solidity ^0.8.12;
+
+contract Marathon{
+
+    uint256 _number;
+    string _message;
+    address _owner;
+    mapping (address => bool) public users;
+
+    constructor(string memory _race){
+        _number = 1;
+        _message = _race; 
+        _owner = msg.sender;
+    }
+
+    function printMessage() public view returns (string memory){
+        return _message;
+    }
+
+  
+    function number() public view returns (uint256) {
+        return  _number;
+    }
+
+    function setMessage(string memory newMessage) external payable{
+        require (_owner == msg.sender, "Set MESSAGE ONLY OWNER FUNCTION");
+        require (msg.value == 10 ," send some wei");
+        _message=newMessage;
+    }
+
+    function addUsers(address _user) external  {
+        users[_user]=true;
+    }
+
+    function setMessageByUser(string memory _newMsg)external{
+        require(users[msg.sender],"only users function");
+        _message=_newMsg;
+        users[msg.sender]=false;
+    }
+
